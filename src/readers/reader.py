@@ -7,7 +7,13 @@ from typing import Type
 import openpyxl
 from openpyxl.workbook import Workbook
 
-from formatters.models import BookModel, InternetResourceModel, ArticlesCollectionModel
+from formatters.models import (
+    BookModel,
+    InternetResourceModel,
+    ArticlesCollectionModel,
+    NewspaperModel,
+    JournalModel,
+)
 from logger import get_logger
 from readers.base import BaseReader
 
@@ -90,6 +96,56 @@ class ArticlesCollectionReader(BaseReader):
         }
 
 
+class NewspaperReader(BaseReader):
+    """
+    Чтение модели газеты.
+    """
+
+    @property
+    def model(self) -> Type[NewspaperModel]:
+        return NewspaperModel
+
+    @property
+    def sheet(self) -> str:
+        return "Статья из газеты"
+
+    @property
+    def attributes(self) -> dict:
+        return {
+            "authors": {0: str},
+            "article_title": {1: str},
+            "newspaper_title": {2: str},
+            "year": {3: int},
+            "date": {4: str},
+            "article_number": {5: int},
+        }
+
+
+class JournalReader(BaseReader):
+    """
+    Чтение модели журнала.
+    """
+
+    @property
+    def model(self) -> Type[JournalModel]:
+        return JournalModel
+
+    @property
+    def sheet(self) -> str:
+        return "Статья из журнала"
+
+    @property
+    def attributes(self) -> dict:
+        return {
+            "authors": {0: str},
+            "article_title": {1: str},
+            "journal_title": {2: str},
+            "year": {3: int},
+            "journal_number": {4: int},
+            "pages": {5: str},
+        }
+
+
 class SourcesReader:
     """
     Чтение из источника данных.
@@ -100,6 +156,8 @@ class SourcesReader:
         BookReader,
         InternetResourceReader,
         ArticlesCollectionReader,
+        NewspaperReader,
+        JournalReader,
     ]
 
     def __init__(self, path: str) -> None:

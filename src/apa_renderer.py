@@ -7,10 +7,10 @@ from pathlib import Path
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH  # pylint: disable=E0611
-from docx.shared import Pt
+from docx.shared import Mm, Pt
 
 
-class Renderer:
+class APARenderer:
     """
     Создание выходного файла – Word.
     """
@@ -30,7 +30,8 @@ class Renderer:
         # стилизация заголовка
         paragraph = document.add_paragraph()
         paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        runner = paragraph.add_run("Список использованной литературы")
+        runner = paragraph.add_run("References")
+        runner.font.size = Pt(14)
         runner.bold = True
 
         # стилизация текста
@@ -38,17 +39,20 @@ class Renderer:
         style_normal.font.name = "Times New Roman"
         style_normal.font.size = Pt(12)
         style_normal.paragraph_format.line_spacing = 1.5
-        style_normal.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        style_normal.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        style_normal.paragraph_format.space_after = Pt(12)
+        style_normal.paragraph_format.first_line_indent = Mm(-10)
+        style_normal.paragraph_format.keep_together = True
 
         for row in self.rows:
             # добавление источника
             content = row.split("/i/")
             if len(content) > 1:
-                list_number = document.add_paragraph(content[0], style="List Number")
+                list_number = document.add_paragraph(content[0], style="Normal")
                 list_number.add_run(content[1]).italic = True
                 list_number.add_run(content[2]).italic = False
             else:
-                document.add_paragraph(row, style="List Number")
+                document.add_paragraph(row, style="Normal")
 
         # сохранение файла Word
         document.save(path)
