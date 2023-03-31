@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from renderer import Renderer
+from apa_renderer import APARenderer
 
 
 class TestRenderer:
@@ -41,3 +42,21 @@ class TestRenderer:
         assert len(list(tmp_path.iterdir())) == 1
         # проверка размера файла в байтах на диске
         assert path.stat().st_size == 36773
+
+    def test_apa_render(
+        self, tmp_path: Path, formatted_models: tuple[str, ...]
+    ) -> None:
+        """
+        Тестирование функции генерации выходного файла APA.
+
+        :param Path tmp_path: Фикстура пути для временного хранения файла во время тестирования
+        :param tuple[str, ...] formatted_models: Список строк для сохранения в файле
+        """
+
+        path = tmp_path / "output.docx"
+        APARenderer(formatted_models).render(path)
+
+        # проверка наличия файла
+        assert len(list(tmp_path.iterdir())) == 1
+        # проверка размера файла в байтах на диске
+        assert path.stat().st_size == 36732
